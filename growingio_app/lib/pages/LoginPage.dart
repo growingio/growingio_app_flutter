@@ -120,14 +120,9 @@ class _LoginPageState extends State<LoginPage> {
                SetPageData.getUserInfoRequest();
                SetPageData.getProject();
               _saveLoginMsg();//
-              SetPageData.func = (){
-                Navigator.of(context).pushAndRemoveUntil(
-                    new MaterialPageRoute(builder: (context) => new RootPage()
-                    ), (route) => route == null);
-              };
-              // Navigator.of(context).pushAndRemoveUntil(
-              //     new MaterialPageRoute(builder: (context) => new RootPage()
-              //     ), (route) => route == null);
+              Navigator.of(context).pushAndRemoveUntil(
+                        new MaterialPageRoute(builder: (context) => new RootPage()
+                        ), (route) => route == null);
             }else{
               Toast.show('请阅读并同意隐私协议', context);
             }

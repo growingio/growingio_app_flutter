@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'RootPage.dart';
 import '../util/SetpageData.dart';
 import '../util/SummaryPageData.dart';
-//import 'package:charts_flutter/flutter.dart' as charts;
 class SalesData {
   final int year;
   final int sales;
@@ -46,11 +45,6 @@ class _SetPage extends State<SetPage> {
             SummaryPageData.chartdata = [];
             SummaryPageData.chartkey = [];
             SummaryPageData.getData();
-            SetPageData.func = (){
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) =>  RootPage()
-                  ), (route) => route == null);
-            };
           },
           color: Colors.white,//按钮颜色
           child: Container(

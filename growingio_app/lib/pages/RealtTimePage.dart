@@ -1,6 +1,8 @@
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import '../util/RealTimePageData.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'dart:async';
 
 class RealtTimePage extends StatefulWidget {
   @override
@@ -20,6 +22,9 @@ class TimeSeriesSales {
   TimeSeriesSales(this.time, this.sales);
 }
 class _RealtTimePage extends State<RealtTimePage> {
+  List colortype = [charts.MaterialPalette.blue.shadeDefault,charts.MaterialPalette.green.shadeDefault,charts.MaterialPalette.yellow.shadeDefault,charts.MaterialPalette.red.shadeDefault,charts.MaterialPalette.deepOrange.shadeDefault];
+  List namearr = [];
+  List nativecolortype = [Colors.blue,Colors.green,Colors.yellow,Colors.red,Colors.deepOrange];
   String gettimeStampWithTime(String timeStampString){
     DateTime today =DateTime.fromMillisecondsSinceEpoch(int.parse(timeStampString));
     return "${today.year.toString()}-${today.month.toString().padLeft(2,'0')}-${today.day.toString().padLeft(2,'0')}";
@@ -44,7 +49,8 @@ class _RealtTimePage extends State<RealtTimePage> {
     for(int i = (arr.length/2).toInt();i<arr.length;i+=(arr.length/2/24).toInt()){
       data2.add(TimeSeriesSales(datatime++, arr[i][1]));//
     }
-    final List<charts.Series<TimeSeriesSales, num>> seriesList =[charts.Series<TimeSeriesSales, num>(
+    final List<charts.Series<TimeSeriesSales, num>> seriesList =[
+      charts.Series<TimeSeriesSales, num>(
       id: 'Sales',
       colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
       domainFn: (TimeSeriesSales sales, _) => sales.time,
@@ -85,23 +91,24 @@ class _RealtTimePage extends State<RealtTimePage> {
   }
   Widget getChartViews(int index ){
     final List<charts.Series<TimeSeriesSales, num>> seriesList = [];
-    List namearr = [];
-   List arr = RealTimePageData.chartdata[index]["data"];
+    List arr = RealTimePageData.chartdata[index]["data"];
+    namearr = [];
     namearr.add(arr[0][1]);
     for(int i = 1;i<arr.length;i++){
       if(!(arr[i][1] == arr[i-1][1])){
         namearr.add(arr[i][1]);
       }
     }
+
     for(int i = 0;i < namearr.length;i++){
       int datatime = 0;
       List<TimeSeriesSales> data = [];
-      for(int  i = 0+index*(arr.length/namearr.length).toInt();i<(arr.length/namearr.length);i+=((arr.length/namearr.length)/24).toInt()){
-        data.add(TimeSeriesSales(datatime++, arr[i][2]));
+      for(int  j = i*(arr.length/namearr.length).toInt();j<(i+1)*(arr.length/namearr.length);j+=((arr.length/namearr.length)/24).toInt()){
+        data.add(TimeSeriesSales(datatime++, arr[j][2]));
     }
       seriesList.add(charts.Series<TimeSeriesSales, num>(
         id: 'Sales',
-        colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+        colorFn: (_, __) => colortype[i],
         domainFn: (TimeSeriesSales sales, _) => sales.time,
         measureFn: (TimeSeriesSales sales, _) => sales.sales,
         // dashPatternFn: (_, __) => [8, 2, 4, 2],
@@ -166,12 +173,24 @@ class _RealtTimePage extends State<RealtTimePage> {
   }
   void initState() {
     super.initState();
-    //RealTimePageData.getrealtimeDashBoards();
     RealTimePageData.updata1 = (){
       setState(() {
 
       });
     };
+  }
+  List<Widget> _getLineName(){
+    List<Widget> lview = [];
+    for(int i = 0;i<namearr.length;i++){
+      lview.add(Container(
+        width: 8.0,
+        height: 8.0,
+        color: nativecolortype[i],
+      ),);
+      lview.add(Text(namearr[i]),);
+      lview.add(SizedBox(height: 20.0,),);
+    }
+    return lview;
   }
   List<Widget> _getwidgget(List arr,String name,int index){
     List<Widget> lview = [];
@@ -186,7 +205,7 @@ class _RealtTimePage extends State<RealtTimePage> {
     lview.add(Text(
       getRealTime(),//SummaryPageData.chartdata[i]['meta']['columns'][1]['name'],
       style: TextStyle(
-          fontSize: 15,
+          fontSize: 10,
           fontWeight: FontWeight.bold
       ),
     ));
@@ -194,7 +213,8 @@ class _RealtTimePage extends State<RealtTimePage> {
         child: _simpleLine(index)
     ));
     lview.add(SizedBox(height: 5,));
-    if(arr.length > 20){
+    List value = RealTimePageData.chartdata[index]['data'][0];
+    if(value.length == 2){
       lview.add(Center(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -212,6 +232,15 @@ class _RealtTimePage extends State<RealtTimePage> {
               ),
               Text(gettimeStampWithTime(arr[(arr.length-2).toInt()][0].toString())),//
             ],
+          )
+
+      ));
+    }
+    else if(value.length == 3){
+      lview.add(Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: _getLineName()
           )
 
       ));
@@ -251,44 +280,6 @@ class _RealtTimePage extends State<RealtTimePage> {
             padding: EdgeInsets.only(left: 1.0),
             child: Column(
                children: _getwidgget(arr,name,i)////<Widget>[<Widget>[
-              //   Text(
-              //     name,
-              //     style: TextStyle(
-              //         fontWeight: FontWeight.bold
-              //     ),
-              //   ),
-              //   Text(
-              //     "${today.year.toString()}-${today.month.toString().padLeft(2,'0')}-${today.day.toString().padLeft(2,'0')}-${today.hour.toString().padLeft(2,'0')}-${today.minute.toString().padLeft(2,'0')}",
-              //     style: TextStyle(
-              //         fontWeight: FontWeight.bold
-              //     ),
-              //   ),
-              //   //SizedBox(height: 5,),
-              //   Expanded(
-              //       child: _simpleLine(i)
-              //   ),
-              //   Center(
-              //       child: Row(
-              //         mainAxisAlignment: MainAxisAlignment.center,
-              //         children: <Widget>[
-              //           Container(
-              //             width: 50.0,
-              //             height: 2.0,
-              //             color: Colors.blue,
-              //           ),
-              //           Text('2021-11-09'),//gettimeStampWithTime(arr[0][0].toString())
-              //           SizedBox(width: 10.0,),
-              //           Container(
-              //             width: 50.0,
-              //             height: 2.0,
-              //             color: Colors.green,
-              //           ),
-              //           Text('2021-11-01')//gettimeStampWithTime(arr[arr.length-2][0].toString())
-              //         ],
-              //       )
-              //
-              //   ),
-              // ],
             ),
           )
       )
@@ -296,12 +287,33 @@ class _RealtTimePage extends State<RealtTimePage> {
     }
     return list;
   }
+  void _refresh() async {
+    RealTimePageData.realtime = [];
+    RealTimePageData.realtimerequest = [];
+    RealTimePageData.chartkey = [];
+    RealTimePageData.chartdata = [];
+    RealTimePageData.getrealtimeDashBoards();
+    print("_refresh");
+  }
+
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return ListView(
-      // scrollDirection: Axis.vertical,
-      children: this._listViewData(),
+    return Scaffold(
+      body: EasyRefresh(
+        onRefresh: () async {
+          _refresh();
+        },
+        // onLoad: () async {
+        //   _load();
+        // },
+        child: ListView(
+          // scrollDirection: Axis.vertical,
+          children: this._listViewData(),
+        )
+      ),
     );
   }
 }
+

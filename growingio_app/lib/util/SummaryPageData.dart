@@ -80,8 +80,7 @@ class SummaryPageData {
   }
   //根据数据生成图表
   static void RefreshOverView(){
-    SetPageData.func();
-    SetPageData.updata();
+    SetPageData.pushSummaryPage();
   }
 
 }

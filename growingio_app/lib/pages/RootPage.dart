@@ -38,6 +38,11 @@ class MyOSCClientState extends State<RootPage> {
 
   // 数据初始化，包括TabIcon数据和页面内容数据
   void initData() {
+    SetPageData.pushSummaryPage = (){
+      setState(() {
+        _tabIndex = 0;
+      });
+    };
     _routes['newsDetail'] = (BuildContext) {
       return  NewsDetailPage();
     };

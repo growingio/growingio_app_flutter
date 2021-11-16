@@ -9,7 +9,7 @@ class SetPageData {
    static String projectid = '';
    static List userInfo = [];
    static List<dynamic> project = [];
-   static var func = (){};
+   static var pushSummaryPage = (){};
    static var updata = (){};
    static void getUserInfoRequest() async{
       Map<String, String> header = {
