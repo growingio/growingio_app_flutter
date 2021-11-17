@@ -124,6 +124,7 @@ class _SummaryPage extends State<SummaryPage> {
     // );
     return charts.LineChart(List.from(seriesList),
         animate: true,
+
         defaultRenderer:
         charts.LineRendererConfig(
           // 圆点大小
@@ -141,6 +142,30 @@ class _SummaryPage extends State<SummaryPage> {
           areaOpacity: 0.2 ,
         ));
   }
+
+  /* 折线图 点击方法  通过 X轴下标 判断显示*/
+  void _onSelectionChanged(charts.SelectionModel model) {
+    var datum = model.selectedDatum[0];
+    print('点击了 x:');
+  }
+  // _onSelectionChanged1(charts.SelectionModel model) {
+  //   final selectedDatum = model.selectedDatum;
+  //
+  //   String  time;
+  //   final measures = <String, num>{};
+  //   if (selectedDatum.isNotEmpty) {
+  //     time = selectedDatum.first.datum.time;
+  //     selectedDatum.forEach((charts.SeriesDatum datumPair) {
+  //       measures[datumPair.series.displayName] = datumPair.datum.sales;
+  //     });
+  //   }
+  //
+  //   // Request a build.
+  //   setState(() {
+  //     _time = time;
+  //     _measures = measures;
+  //   });
+  // }
   Widget getChartViews(int index ){
     String str;
     if(SummaryPageData.plat.length == 2){
@@ -160,17 +185,44 @@ class _SummaryPage extends State<SummaryPage> {
       colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
       domainFn: (LinearSales sales, _) => sales.x,
       measureFn: (LinearSales sales, _) => sales.y,
-      dashPatternFn: (_, __) => [8, 2, 4, 2],
-      displayName: 'wen',
       data: data1,
     )
     ];
-
+    if(data1.length == 0){
+      return charts.BarChart(
+          seriesList,
+          animate: false,
+          );
+    }
     return charts.BarChart(
       seriesList,
-      animate: true,
-    );
+      animate: false,
+      behaviors: [
+        // Add the sliding viewport behavior to have the viewport center on the
+        // domain that is currently selected.
+         charts.SlidingViewport(),
+        // A pan and zoom behavior helps demonstrate the sliding viewport
+        // behavior by allowing the data visible in the viewport to be adjusted
+        // dynamically.
+         charts.PanAndZoomBehavior(),
 
+      ],
+        domainAxis: charts.OrdinalAxisSpec(
+            viewport:  charts.OrdinalViewport(num[0][0],(num[0][1]).toInt())),
+
+      defaultRenderer:charts.BarRendererConfig(
+          maxBarWidthPx:50,
+
+      ),
+
+      // // selectionModels: [
+      // //   charts.SelectionModelConfig(
+      // //     type: charts.SelectionModelType.info,
+      // //     //切换选中数据时的回调函数
+      // //     changedListener: _onSelectionChanged,
+      // //   ),
+      // // ],
+    );
   }
   Widget _simpleLine(int index) {
     print('${SummaryPageData.chartdata}');
@@ -196,7 +248,8 @@ class _SummaryPage extends State<SummaryPage> {
     lview.add(SizedBox(height: 5,));
     lview.add(Expanded(
         child: _simpleLine(index)
-    ));
+    )
+    );
     lview.add(SizedBox(height: 5,));
     if(arr.length > 20){
       lview.add(Center(
@@ -263,14 +316,13 @@ class _SummaryPage extends State<SummaryPage> {
     for (int i = 0; i <  SummaryPageData.chartdata.length; i++) {
       List arr = SummaryPageData.chartdata[i]['data'];
       String name = SummaryPageData.chartkey[i];
+
+
       list.add(Container(
-          height: MediaQuery.of(context).size.width,
-          width: MediaQuery.of(context).size.width+40,
-          child:  Padding(
-            padding: EdgeInsets.only(left: 1.0),
-            child: Column(
-               children: _getwidgget(arr,name,str,i)
-            ),
+          height: MediaQuery.of(context).size.width+40,
+          //width: MediaQuery.of(context).size.width*2,
+          child: Column(
+              children: _getwidgget(arr,name,str,i)
           )
       )
       );

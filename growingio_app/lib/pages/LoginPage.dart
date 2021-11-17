@@ -53,13 +53,6 @@ class _LoginPageState extends State<LoginPage> {
 
     final email = TextFormField(//用户名
       controller: _userName,
-      //keyboardType: TextInputType.emailAddress,
-      //autofocus: false,//是否自动对焦
-      //initialValue: 'wenjiasheng@growingio.com',//默认输入的类容
-      // onChanged: (String str) {
-      //   //onChanged是每次输入框内每次文字变更触发的回调
-      //   user_name = str;
-      // },
       decoration: InputDecoration(
           hintText: '请输入用户名',//提示内容Wen0219gro
           contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),//上下左右边距设置
@@ -71,14 +64,7 @@ class _LoginPageState extends State<LoginPage> {
 
     final password = TextFormField(//密码
       controller: _userPwd,
-      //autofocus: false,
-      //keyboardType: TextInputType.text,
-      //initialValue: 'Wen0219gro',//默认输入的类容
       obscureText: true,
-      // onChanged: (String str) {
-      //   //onChanged是每次输入框内每次文字变更触发的回调
-      //   user_pw = str;
-      // },
       decoration: InputDecoration(
           hintText: '请输入密码',
           contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
@@ -107,7 +93,7 @@ class _LoginPageState extends State<LoginPage> {
               //获取登录token
               dynamic body = await NetUtils.post("https://www.growingio.com/oauth2/token", params: {
                 "username": _userName.text,
-                "password": _userPwd.text,//'Wen0219gro',//user_pw,
+                "password": _userPwd.text,
                 "grantType":"password"
               });
                if(body == null){
@@ -141,9 +127,6 @@ class _LoginPageState extends State<LoginPage> {
             child: FlatButton(//扁平化的按钮，前面博主已经讲解过
               child: Text('我已阅读并同意《用户协议》 《隐私政策》', style: TextStyle(color: Colors.black54, fontSize: 12.0),),
               onPressed: () {
-                // Navigator.of(context).pushAndRemoveUntil(
-                //     new MaterialPageRoute(builder: (context) => new GioWebView()
-                //     ), (route) => route == null);
                 Navigator.push(
                     context,
                      MaterialPageRoute(builder: (context) =>  GioWebView()));

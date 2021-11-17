@@ -7,6 +7,7 @@ class SetPageData {
    static String token = '';
    static String projectName = '';
    static String projectid = '';
+   static List home = [];
    static List userInfo = [];
    static List<dynamic> project = [];
    static var pushSummaryPage = (){};
@@ -33,6 +34,25 @@ class SetPageData {
       str = "company:" + response["profile"]['company'];
       userInfo.add(str);
       print('str $str company $userInfo');
+   }
+   static void getHome() async{
+      Map<String, String> header = {
+         "Authorization":token,
+         "Content-Type":"text/plain"
+      };
+      dynamic body = await NetUtils.get('https://gta.growingio.com/v2/projects/'+projectid+"/home",header);
+      if(body == null){
+         print('获取getProject失败');
+         return ;
+      }
+      print('getProject body $body');
+      List<dynamic> response = jsonDecode(body);
+      project = response;
+      projectName = project[0]['name'];
+      projectid = project[0]['id'];
+      print('getProject response $project');
+      SummaryPageData.getData();
+      //func();
    }
    static void getProject() async{
       Map<String, String> header = {

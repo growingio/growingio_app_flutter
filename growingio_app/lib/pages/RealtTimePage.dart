@@ -118,6 +118,13 @@ class _RealtTimePage extends State<RealtTimePage> {
     }
     return charts.LineChart(List.from(seriesList),
         animate: true,
+        // selectionModels: [
+        //   charts.SelectionModelConfig(
+        //     type: charts.SelectionModelType.info,
+        //     //切换选中数据时的回调函数
+        //     changedListener: _onSelectionChange,
+        //   ),
+        // ],
         defaultRenderer:
         charts.LineRendererConfig(
           // 圆点大小
@@ -182,6 +189,7 @@ class _RealtTimePage extends State<RealtTimePage> {
   List<Widget> _getLineName(){
     List<Widget> lview = [];
     for(int i = 0;i<namearr.length;i++){
+      lview.add(SizedBox(height: 10.0,),);
       lview.add(Container(
         width: 8.0,
         height: 8.0,
