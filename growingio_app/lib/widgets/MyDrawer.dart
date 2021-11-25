@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import '../../pages/LoginPage.dart';
+import '../pages/LoginPage.dart';
 
 import '../util/SetpageData.dart';
 class MyDrawer extends StatelessWidget {

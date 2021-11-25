@@ -1,7 +1,19 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter/services.dart';
+
 
 class GioWebView extends StatelessWidget {
+  WebViewController  ?_webViewController ;
+  _loadHtmlFromAssets() async {
+
+    String fileHtmlContents = await rootBundle.loadString('images/file/privacy.html');
+    _webViewController!.loadUrl(Uri.dataFromString(fileHtmlContents,
+
+        mimeType: 'text/html', encoding: Encoding.getByName('utf-8'))
+        .toString());
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,11 +28,22 @@ class GioWebView extends StatelessWidget {
       body: Stack(
         children: <Widget>[
           new WebView(
-            initialUrl: 'https://accounts.growingio.com/privacy', // 加载的url
+            initialUrl: '',
 
+            javascriptMode: JavascriptMode.unrestricted,
+
+            onWebViewCreated: (WebViewController webViewController) {
+
+              _webViewController = webViewController;
+
+              _loadHtmlFromAssets();
+
+            },
           )
         ],
       ),
     );
+
   }
+
 }

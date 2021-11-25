@@ -1,10 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.growingio_app">
-
-    //<uses-permission android:name="android.permission.INTERNET" />
-
+    <!-- 照相机权限 -->
+    <uses-permission android:name="android.permission.CAMERA" />
    <application
-        android:label="growingio_app"
+        android:label="GIO增长小助手"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
@@ -29,8 +28,11 @@
         </activity>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
+       <!-- 二维码扫描 -->
+       <activity android:name="com.apptreesoftware.barcodescan.BarcodeScannerActivity"/>
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
 </manifest>
+

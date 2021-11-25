@@ -8,6 +8,18 @@ import '../widgets/MyDrawer.dart';
 import 'NewsDetailPage.dart';
 import '../util/SetpageData.dart';
 import '../util/RealTimePageData.dart';
+import 'package:barcode_scan_fix/barcode_scan.dart';
+import 'package:flutter/services.dart';
+
+class PluginManager {
+  static const MethodChannel _channel =
+  const MethodChannel('plugin_demo');
+
+  static Future<String> pushFirstActivity(Map params) async {
+    String resultStr = await _channel.invokeMethod('jumpToActivity', params);
+    return resultStr;
+  }
+}
 
 class RootPage extends StatefulWidget {
   @override
@@ -29,6 +41,8 @@ class MyOSCClientState extends State<RootPage> {
   // 页面顶部的大标题
   var appBarTitles = ['概览', '实时', '看板', '设置'];
 
+  // 定义变量存储扫描结果
+  String ?barcode;
   Map<String, WidgetBuilder> _routes = new Map();
 
   // 传入图片路径，返回一个Image组件
@@ -107,7 +121,7 @@ class MyOSCClientState extends State<RootPage> {
     for (int i = 0; i < 4; i++) {
       list.add(new BottomNavigationBarItem(
           icon: getTabIcon(i),
-          title: getTabTitle(i)
+          label: appBarTitles[i]//getTabTitle(i)
       ));
     }
     return list;
@@ -129,7 +143,15 @@ class MyOSCClientState extends State<RootPage> {
                 // 设置AppBar上文本的样式
                 style:  TextStyle(color: Colors.white)),
             // 设置AppBar上图标的样式
-            iconTheme:  IconThemeData(color: Colors.white)
+            iconTheme:  IconThemeData(color: Colors.white),
+            actions: <Widget>[
+              new IconButton( // action button
+                icon: new Icon(Icons.qr_code_scanner),
+                onPressed: ()
+                {
+                  _scan();
+                },
+              ),]
         ),
         body: _body,
         // bottomNavigationBar属性为页面底部添加导航的Tab，CupertinoTabBar是Flutter提供的一个iOS风格的底部导航栏组件
@@ -150,5 +172,43 @@ class MyOSCClientState extends State<RootPage> {
         drawer:  MyDrawer(),
       ),
     );
+  }
+  Future _scan() async {
+    try {
+      String str = await BarcodeScanner.scan();
+      print("GIO增长小助手Test:$str");
+      if(str == 'GIO增长小助手Test'){
+        // String resultString;
+        // try {
+        //   resultString = await PluginManager.pushFirstActivity({'key': 'value'});
+        // } on PlatformException {
+        //   resultString = '失败';
+        // }
+        // print(resultString);
+      }
+      setState(() {
+        barcode = str;
+        print("barcode$barcode");
+      });
+
+    } on PlatformException catch (e) {
+      if (e.code == BarcodeScanner.CameraAccessDenied) {
+        setState(() {
+          barcode = 'The user did not grant the camera permission!';
+        });
+      } else {
+        setState(() {
+          barcode = 'Unknown error: $e';
+        });
+      }
+    } on FormatException {
+      setState(() {
+        this.barcode ='null (User returned using the "back"-button before scanning anything. Result)';
+      });
+    } catch (e) {
+      setState((){
+        this.barcode = 'Unknown error: $e';
+      });
+    }
   }
 }
