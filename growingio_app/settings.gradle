@@ -1,0 +1,10 @@
+include ':app'
+setBinding(new Binding([gradle: this]))
+evaluate(new File(
+  settingsDir,
+  '../growingio_module/.android/include_flutter.groovy'
+))
+rootProject.name = "growingio_app"
+
+include ':growingio_module'
+project(':growingio_module').projectDir = new File('../growingio_module')
